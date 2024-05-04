@@ -45,25 +45,6 @@ Async runtimes have to do two things to accommodate for other runtime agnostic A
 
 ## API for clients
 ```rust
-/// Unique among running tasks.
-///
-/// There is no guarantee about its uniqueness among all spawned tasks. One could be reclaimed
-/// after task finished and joined.
-///
-/// # Cautions
-/// * Runtime should not rely on its uniqueness after task dropped.
-/// * Client should not rely on tis uniqueness after task joined.
-///
-/// It is intentional to not `Copy` but `Clone` to make it verbose to create a new one to avoid abusing.
-#[derive(Hash, PartialEq, Eq)]
-pub struct Id(u64);
-
-pub struct JoinHandle<T> {}
-
-impl<T> Future for JoinHandle<T> {
-    type Output = Result<T, JoinError>;
-}
-
 impl<T> JoinHandle<T> {
     /// Gets id of the associated task.
     pub fn id(&self) -> Id {}
@@ -76,6 +57,10 @@ impl<T> JoinHandle<T> {
 
     /// Attaches to associated task to gain cancel on [Drop] permission.
     pub fn attach(self) -> TaskHandle<T> { }
+}
+
+impl<T> Future for JoinHandle<T> {
+    type Output = Result<T, JoinError>;
 }
 
 /// Spawns a new task.
