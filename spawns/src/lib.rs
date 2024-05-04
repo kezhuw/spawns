@@ -46,3 +46,6 @@
 
 pub use spawns_core::*;
 pub use spawns_executor::*;
+
+#[cfg(feature = "spawns-compat")]
+static _LINK_COMPAT: () = spawns_compat::__linkme_const();

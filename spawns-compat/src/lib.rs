@@ -1,3 +1,19 @@
+//! `spawns-compat` provides functions to find async runtimes for spawning task.
+//!
+//! It uses [linkme] to inject these functions to `spawns-core`. In some platforms, this crate may
+//! not be linked to binary finally. So, you may have to speak explicitly about this with `extern
+//! crate spawns_compat`. Besides this, in macOS, you may have to put below to your `Cargo.toml`.
+//!
+//! ```toml
+//! [profile.dev]
+//! lto = "thin"
+//! ```
+//!
+//! See for details:
+//! * <https://stackoverflow.com/questions/29403920/whats-the-difference-between-use-and-extern-crate/29404692#29404692>
+//! * <https://github.com/dtolnay/linkme/issues/31>
+//! * <https://github.com/dtolnay/linkme/issues/61>
+
 #[cfg(feature = "smol")]
 mod smol;
 #[cfg(feature = "tokio")]
@@ -5,6 +21,9 @@ mod tokio;
 
 #[cfg(feature = "async-global-executor")]
 mod async_global_executor;
+
+#[doc(hidden)]
+pub const fn __linkme_const() {}
 
 #[cfg(test)]
 mod tests {
