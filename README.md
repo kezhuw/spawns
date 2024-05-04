@@ -53,7 +53,7 @@ Async runtimes have to do two things to accommodate for other runtime agnostic A
 /// * Runtime should not rely on its uniqueness after task dropped.
 /// * Client should not rely on tis uniqueness after task joined.
 ///
-/// It is intentional to not `Copy` and `Clone` to avoid abusing.
+/// It is intentional to not `Copy` but `Clone` to make it verbose to create a new one to avoid abusing.
 #[derive(Hash, PartialEq, Eq)]
 pub struct Id(u64);
 
@@ -65,15 +65,16 @@ impl<T> Future for JoinHandle<T> {
 
 impl<T> JoinHandle<T> {
     /// Gets id of the associated task.
-    ///
-    /// It is unsafe due to cautions of [Id].
-    pub unsafe fn id(&self) -> Id {}
+    pub fn id(&self) -> Id {}
 
-    /// Cancels the associated task with this handle.
+    /// Cancels associated task with this handle.
     ///
-    /// There is no guarantee when and will the task got cancelled. The task could even run to
-    /// complete normally after got cancelled.
+    /// Cancellation is inherently concurrent with task execution. Currently, there is no guarantee
+    /// about promptness, the task could even run to complete normally after cancellation.
     pub fn cancel(&self) { }
+
+    /// Attaches to associated task to gain cancel on [Drop] permission.
+    pub fn attach(self) -> TaskHandle<T> { }
 }
 
 /// Spawns a new task.
@@ -92,7 +93,7 @@ The API is capable to spawn, join and cancel tasks as what `tokio`, `smol` and `
 ## Concerns
 1. Boxing ? Yes, it needs `GlobalAlloc`.
 2. Boxing even the entry future ? No, but `try_id()` will return `None`. I guess we could provides function to wrap a bit.
-3. `no_std` ? No, it needs `thread_local!` currently. We can move this to [`#[thread_local]`](`https://github.com/rust-lang/rust/issues/29594`) once stabilized.
+3. `no_std` ? No, it needs `thread_local!` currently. We can move this to [`#[thread_local]`](https://github.com/rust-lang/rust/issues/29594) once stabilized.
 4. `spawn_local` for `!Send` future ? No, at least for now. I saw only `async-global-executor` is capable to `spawn_local` freely. Personally, I think it is Rust's responsibility to not treat futures owning `!Send` as `!Send`. This way there are little chance for us to create `!Send` futures. For futures that capturing `!Send` in first place and storing thread local `!Send`, they need current thread executor.
 
 ## Compatibility
