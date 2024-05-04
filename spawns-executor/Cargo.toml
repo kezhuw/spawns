@@ -1,6 +1,6 @@
 [package]
 name = "spawns-executor"
-version = "0.1.0"
+version = "0.1.1"
 readme.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -16,7 +16,7 @@ default = []
 async-executor = "1.11.0"
 async-shutdown = "0.2.2"
 futures = { version = "0.3.30" }
-spawns-core = { path = "../spawns-core", version = "1.0.0" }
+spawns-core = { path = "../spawns-core", version = "1.0.1" }
 
 [dev-dependencies]
 async-net = "2.0.0"

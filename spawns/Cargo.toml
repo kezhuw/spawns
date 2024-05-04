@@ -1,6 +1,6 @@
 [package]
 name = "spawns"
-version = "0.1.0"
+version = "0.1.1"
 readme.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -16,9 +16,9 @@ smol = ["spawns-compat/smol"]
 async-global-executor = ["spawns-compat/async-global-executor"]
 
 [dependencies]
-spawns-core = { path = "../spawns-core", version = "1.0.0" }
-spawns-compat = { path = "../spawns-compat", version = "0.1.0", optional = true }
-spawns-executor = { path = "../spawns-executor", version = "0.1.0" }
+spawns-core = { path = "../spawns-core", version = "1.0.1" }
+spawns-compat = { path = "../spawns-compat", version = "0.1.1", optional = true }
+spawns-executor = { path = "../spawns-executor", version = "0.1.1" }
 
 [dev-dependencies]
 async-net = "2.0.0"
