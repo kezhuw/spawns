@@ -1,6 +1,7 @@
 [package]
 name = "spawns-executor"
 version = "0.1.0"
+readme.workspace = true
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
