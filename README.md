@@ -2,6 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/spawns)](https://crates.io/crates/spawns)
 [![github-ci](https://github.com/kezhuw/spawns/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/kezhuw/spawns/actions)
+[![codecov](https://codecov.io/gh/kezhuw/spawns/graph/badge.svg?token=qSY9PdISfH)](https://codecov.io/gh/kezhuw/spawns)
 [![docs.rs](https://img.shields.io/docsrs/spawns)](https://docs.rs/spawns)
 [![Apache-2.0](https://img.shields.io/github/license/kezhuw/spawns)](LICENSE)
 
