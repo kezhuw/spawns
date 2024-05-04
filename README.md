@@ -12,7 +12,7 @@ Thread context task spawner for Rust to ease async runtime agnostic coding.
 
 Currently, Rust does not have a standard async runtime. This exposes us a dilemma to choose one and makes creating runtime agnostic library pretty hard. The most challenging thing we have to face is how to spawn task ?
 
-`spawns-core` proposes a thread context task spawner for Rust `std` and async runtimes. Once delivered, we are able to spawn tasks in runtime agnostic manner. Together with other runtime agnostic io, timer, channel and etc. crates, we are capable to write runtime agnostic code easily.
+[spawns-core][] proposes a thread context task spawner for Rust `std` and async runtimes. Once delivered, we are able to spawn tasks in runtime agnostic manner. Together with other runtime agnostic io, timer, channel and etc. crates, we are capable to write runtime agnostic code easily.
 
 
 ## API for async runtimes
@@ -101,7 +101,7 @@ The API is capable to spawn, join and cancel tasks as what `tokio`, `smol` and `
 Package `spawns-core` uses [`linkme`](https://crates.io/crates/linkme) to detect available async runtimes from external packages. Package `spawns-compat` provides features `tokio`, `smol` and `async-global-executor` to detect async runtimes for `spawns-core`. `smol` and `async-global-executor` can't coexist as they don't have `tokio::runtime::Handle::try_current()` like method to detect thread context aware executor.
 
 ## Integrations
-Package `spanws-executor` provides full functional `block_on` with both current thread executor and multi-thread executor.
+Package [spawns-executor][] provides full functional `block_on` with both current thread executor and multi-thread executor.
 
 ## Examples
 See [examples](examples/). A minimum runtime agnostic echo server is listed here for demonstration.
@@ -136,4 +136,7 @@ pub async fn echo_server(port: u16) {
 All you have to do for it to be function is setting up thread context task spawner.
 
 ## License
-[Apache-2.0](LICENSE).
+[Apache-2.0](LICENSE)
+
+[spawns-core]: https://docs.rs/spawns-core
+[spawns-executor]: https://docs.rs/spawns-executor
