@@ -53,7 +53,7 @@ jobs:
     - name: Test code
       run: cargo fc --fail-fast test -- --nocapture
   coverage:
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref_type == 'branch' && github.ref_name == 'master')
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref_type == 'branch' && (github.ref_name == 'master' || github.ref_name == 'coverage'))
     needs: [test]
     runs-on: ubuntu-latest
     env:
@@ -69,9 +69,11 @@ jobs:
           override: true
           components: llvm-tools-preview
     - run: cargo install grcov
+    - name: Install cargo-feature-combinations
+      run: cargo install cargo-feature-combinations
     - run: cargo build --all-features --verbose
     - name: Run tests
-      run: LLVM_PROFILE_FILE="spawns-%p-%m.profraw" cargo test --all-features --verbose -- --nocapture
+      run: LLVM_PROFILE_FILE="spawns-%p-%m.profraw" cargo fc --fail-fast test --verbose -- --nocapture
     - name: Generate coverage report
       run: grcov $(find . -name "spawns-*.profraw" -print) --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o lcov.info
     - name: Upload to codecov.io
