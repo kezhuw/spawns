@@ -1,0 +1,109 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+env:
+  RUSTFLAGS: -Dwarnings
+  RUST_BACKTRACE: full
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: Install latest nightly
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: nightly
+          override: true
+          components: rustfmt
+    - name: Check formatting
+      run: cargo fmt --all -- --check
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: Install rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          override: true
+    - name: Install cargo-feature-combinations
+      run: cargo install cargo-feature-combinations
+    - name: Build code
+      run: cargo fc build
+  test:
+    needs: [build]
+    runs-on: ubuntu-latest
+    env:
+      RUST_LOG: debug
+    steps:
+    - uses: actions/checkout@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: Install rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          override: true
+    - name: Install cargo-feature-combinations
+      run: cargo install cargo-feature-combinations
+    - name: Test code
+      run: cargo fc --fail-fast test -- --nocapture
+  coverage:
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref_type == 'branch' && github.ref_name == 'master')
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+      RUST_LOG: debug
+      RUSTFLAGS: -Cinstrument-coverage
+    steps:
+    - uses: actions/checkout@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: Install latest nightly
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: nightly
+          override: true
+          components: llvm-tools-preview
+    - run: cargo install grcov
+    - run: cargo build --all-features --verbose
+    - name: Run tests
+      run: LLVM_PROFILE_FILE="spawns-%p-%m.profraw" cargo test --all-features --verbose -- --nocapture
+    - name: Generate coverage report
+      run: grcov $(find . -name "spawns-*.profraw" -print) --binary-path ./target/debug/ -s . -t lcov --branch --ignore-not-existing --ignore "/*" -o lcov.info
+    - name: Upload to codecov.io
+      uses: codecov/codecov-action@v2
+      with:
+        verbose: true
+  lint:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: Install rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          override: true
+          components: clippy
+    - name: Lint code
+      run: cargo clippy --all-features --no-deps -- -D clippy::all
+  release:
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: [build, test, lint]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: extract package name from tag
+      id: package-name-extractor
+      run: echo "package=$(echo "$GITHUB_REF_NAME" | cut -d_ -f1)" >> $GITHUB_OUTPUT
+    - name: publish crate
+      env:
+        PACKAGE_NAME: ${{ steps.package-name-extractor.outputs.package }}
+        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      run: cargo publish -p $PACKAGE_NAME

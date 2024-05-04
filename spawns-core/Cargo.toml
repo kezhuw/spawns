@@ -1,0 +1,22 @@
+[package]
+name = "spawns-core"
+version = "1.0.0"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Async runtime agnostic thread context task spawner for Rust"
+
+[features]
+default = []
+compat = ["linkme"]
+test-compat-global1 = ["compat"]
+test-compat-global2 = ["compat", "test-compat-global1"]
+
+[dependencies]
+linkme = { version = "0.3.25", optional = true }
+
+[dev-dependencies]
+futures = "0.3.30"
+static_assertions = "1.1.0"

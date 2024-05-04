@@ -1,0 +1,27 @@
+[package]
+name = "spawns-compat"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Async runtime detections for thread context task spawner"
+
+[features]
+default = []
+tokio = ["linkme", "spawns-core/compat", "dep:tokio"]
+smol = ["linkme", "spawns-core/compat", "dep:smol"]
+async-global-executor = ["linkme", "spawns-core/compat", "dep:async-global-executor"]
+
+[dependencies]
+linkme = { version = "0.3.25", optional = true }
+smol = { version = "2.0.0", optional = true }
+# spawns-core = { path = "../spawns-core", version = "0.1.0", optional = true }
+spawns-core = { path = "../spawns-core", version = "1.0.0" }
+tokio = { version = "1.37.0", features = ["rt"], optional = true }
+async-global-executor = { version =  "2.4.1", optional = true }
+
+[dev-dependencies]
+async-std = "1.12.0"
+tokio = { version = "1.37.0", features = ["full"] }

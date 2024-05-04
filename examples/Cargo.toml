@@ -1,0 +1,19 @@
+[package]
+name = "examples"
+version = "0.0.0"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[example]]
+name = "echo"
+path = "echo.rs"
+
+[dependencies]
+async-executor = "1.11.0"
+async-net = "2.0.0"
+spawns = { path = "../spawns", version = "0.1.0" }
+futures-lite = "2.3.0"
+clap = "4.5.4"

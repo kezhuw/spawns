@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = [
+  "examples",
+  "spawns",
+  "spawns-core",
+  "spawns-compat",
+  "spawns-executor",
+]
+
+[workspace.package]
+edition = "2021"
+authors = ["Kezhu Wang <kezhuw@gmail.com>"]
+license = "Apache-2.0"
+homepage = "https::/github.com/kezhuw/spawns"
+repository = "https::/github.com/kezhuw/spawns"
+documentation = "https://docs.rs/spawns"
+
+[workspace.metadata.cargo-all-features]
+skip_optional_dependencies = true
