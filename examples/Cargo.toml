@@ -14,6 +14,6 @@ path = "echo.rs"
 [dependencies]
 async-executor = "1.11.0"
 async-net = "2.0.0"
-spawns = { path = "../spawns", version = "0.2.0", features = ["executor"]}
+spawns = { path = "../spawns", version = "0.2.1", features = ["executor"]}
 futures-lite = "2.3.0"
 clap = "4.5.4"
