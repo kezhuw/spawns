@@ -21,3 +21,6 @@ linkme = { version = "0.3.25", optional = true }
 [dev-dependencies]
 futures = "0.3.30"
 static_assertions = "1.1.0"
+
+[package.metadata.docs.rs]
+all-features = true

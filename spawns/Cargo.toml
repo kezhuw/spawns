@@ -24,3 +24,6 @@ spawns-executor = { path = "../spawns-executor", version = "0.1.1", optional = t
 [dev-dependencies]
 async-net = "2.0.0"
 futures-lite = "2.3.0"
+
+[package.metadata.docs.rs]
+all-features = true

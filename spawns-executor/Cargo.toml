@@ -9,9 +9,6 @@ license.workspace = true
 repository.workspace = true
 description = "Async executors for thread context task spawner"
 
-[features]
-default = []
-
 [dependencies]
 async-executor = "1.11.0"
 async-shutdown = "0.2.2"
@@ -21,3 +18,6 @@ spawns-core = { path = "../spawns-core", version = "1.0.1" }
 [dev-dependencies]
 async-net = "2.0.0"
 futures-lite = "2.3.0"
+
+[package.metadata.docs.rs]
+all-features = true
