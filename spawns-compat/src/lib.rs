@@ -2,7 +2,8 @@
 //!
 //! It uses [linkme] to inject these functions to `spawns-core`. In some platforms, this crate may
 //! not be linked to binary finally. So, you may have to speak explicitly about this with `extern
-//! crate spawns_compat`. Besides this, in macOS, you may have to put below to your `Cargo.toml`.
+//! crate spawns_compat`. You could also use it with `spawns-core` through `spawns` which does so
+//! for you. Besides this, in macOS, you may have to put below to your `Cargo.toml`.
 //!
 //! ```toml
 //! [profile.dev]
@@ -21,9 +22,6 @@ mod tokio;
 
 #[cfg(feature = "async-global-executor")]
 mod async_global_executor;
-
-#[doc(hidden)]
-pub const fn __linkme_const() {}
 
 #[cfg(test)]
 mod tests {
