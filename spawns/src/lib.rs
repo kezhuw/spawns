@@ -45,6 +45,8 @@
 //! tasks. [spawn()] will panic if there is no thread local spawners but multiple global spawners.
 
 pub use spawns_core::*;
+
+#[cfg(feature = "executor")]
 pub use spawns_executor::*;
 
 #[cfg(feature = "spawns-compat")]
