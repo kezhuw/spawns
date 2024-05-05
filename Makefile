@@ -1,3 +1,5 @@
+all: check build test-matrix
+
 check: check_fmt lint doc
 
 verify: check build test
@@ -16,6 +18,9 @@ build:
 
 test:
 	cargo test --all-features
+
+test-matrix:
+	cargo fc --fail-fast test
 
 doc:
 	cargo doc --all-features
