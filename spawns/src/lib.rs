@@ -1,8 +1,8 @@
 //! `spawns` proposes thread context task spawner to ease async runtime agnostic coding.
 //!
 //! It introduces few concepts for async runtimes to setup thread context task spawner:
-//! * `Spawn` trait to spawn task.
-//! * `enter()` to enter spawn scope.
+//! * [Spawn] trait to spawn task.
+//! * [enter()] to enter spawn scope.
 //!
 //! With above, `spawns` provides [spawn()] and [JoinHandle] to spawn and join tasks.
 //!
