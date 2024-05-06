@@ -50,6 +50,15 @@
 //! Noted that, all those compatibility features, injections should only active on tests and
 //! binaries. Otherwise, they will be propagated to dependents with unnecessary dependencies.
 //!
+//! For macOS users, you may have to put below to your `Cargo.toml` for above to function.
+//!
+//! ```toml
+//! [profile.dev]
+//! lto = "thin"
+//! ```
+//!
+//! See <https://github.com/dtolnay/linkme/issues/61> for sure.
+//!
 //! ## Dealing with multiple global executors
 //! Global executor cloud spawn task with no help from thread context. But this exposes us an
 //! dilemma to us, which one to use if there are multiple global executors present ? By default,
