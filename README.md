@@ -84,7 +84,7 @@ The API is capable to spawn, join and cancel tasks as what `tokio`, `smol` and `
 
 ## Packages
 1. [spawns-core][] provides `Spawn` and `enter()` for async runtimes to setup thread context task spawner.
-2. [spawns-compat][] provides compatibility for `tokio`, `smol` and `async-global-executor`(which is used by `async-std`) through feature gates. Be ware of that, `smol` and `async-global-executor` can't coexist as they don't have `tokio::runtime::Handle::try_current()` like method to detect thread context aware executor. `spawn()` will panic if can't find any thread context spawners but multiple blinding global spawners.
+2. [spawns-compat][] provides compatibility for `tokio`, `smol` and `async-global-executor`(which is used by `async-std`) through feature gates.
 3. [spawns-executor][] provides full functional `block_on` with both current thread executor and multi-thread executor.
 4. [spawns][] exports all above packages including feature gates `tokio`, `smol` and `async-global-executor`. In addition, it provides feature gate `executor` to include `spawns-executor`.
 

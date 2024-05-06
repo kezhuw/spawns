@@ -38,11 +38,11 @@ pub(crate) fn find_spawn() -> Option<fn(Task)> {
     }) {
         Some(spawn) => Some(spawn),
         None => {
+            #[cfg(feature = "panic-multiple-global-spawners")]
             if globals > 1 {
                 panic!("multiple global spawners")
-            } else {
-                last_global.copied()
             }
+            last_global.copied()
         }
     }
 }

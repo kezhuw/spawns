@@ -15,6 +15,7 @@ executor = ["spawns-executor"]
 tokio = ["spawns-compat/tokio"]
 smol = ["spawns-compat/smol"]
 async-global-executor = ["spawns-compat/async-global-executor"]
+panic-multiple-global-spawners = ["spawns-core/panic-multiple-global-spawners"]
 
 [dependencies]
 spawns-core = { path = "../spawns-core", version = "1.0.2" }

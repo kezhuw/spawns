@@ -255,10 +255,18 @@ mod tests {
         }
 
         #[cfg(feature = "test-compat-global2")]
+        #[cfg(feature = "panic-multiple-global-spawners")]
         #[test]
         #[should_panic(expected = "multiple global spawners")]
         fn multiple_globals() {
             spawn(ready(()));
+        }
+
+        #[cfg(feature = "test-compat-global2")]
+        #[cfg(not(feature = "panic-multiple-global-spawners"))]
+        #[test]
+        fn multiple_globals() {
+            block_on(spawn(ready(()))).unwrap();
         }
     }
 }
