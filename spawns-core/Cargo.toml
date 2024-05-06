@@ -12,6 +12,7 @@ description = "Async runtime agnostic thread context task spawner for Rust"
 [features]
 default = []
 compat = ["linkme"]
+panic-multiple-global-spawners = []
 test-compat-global1 = ["compat"]
 test-compat-global2 = ["compat", "test-compat-global1"]
 

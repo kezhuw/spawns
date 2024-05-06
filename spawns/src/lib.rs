@@ -41,8 +41,8 @@
 //! * `smol`: uses `smol::spawn` to spawn task in absent of thread local spawners.
 //! * `async-global-executor`: uses `async_global_executor::spawn` to spawn task in absent of thread local spawners.
 //!
-//! Be aware that, `smol` and `async-global-executor` are not compatible as they both blindly spawn
-//! tasks. [spawn()] will panic if there is no thread local spawners but multiple global spawners.
+//! Since `smol` and `async-global-executor` both blindly spawn tasks, it is unknown which one is
+//! chosen. Feature "panic-multiple-global-spawners" is provided to panic on this situation.
 
 pub use spawns_core::*;
 
