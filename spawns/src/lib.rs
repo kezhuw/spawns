@@ -36,13 +36,28 @@
 //! }
 //! ```
 //!
-//! To cooperate with existing async runtimes, it provides features to inject spawners for them.
+//! ## Compatibility with existing async runtimes
+//!
+//! This is an open world, there might be tens async runtimes. `spawns` provides features to inject
+//! spawners for few.
+//!
 //! * `tokio`: uses `tokio::runtime::Handle::try_current()` to detect thread local `tokio` runtime handle.
 //! * `smol`: uses `smol::spawn` to spawn task in absent of thread local spawners.
 //! * `async-global-executor`: uses `async_global_executor::spawn` to spawn task in absent of thread local spawners.
 //!
-//! Since `smol` and `async-global-executor` both blindly spawn tasks, it is unknown which one is
-//! chosen. Feature "panic-multiple-global-spawners" is provided to panic on this situation.
+//! For other async runtimes, one could inject [Compat]s to [static@COMPATS] themselves.
+//!
+//! Noted that, all those compatibility features, injections should only active on tests and
+//! binaries. Otherwise, they will be propagated to dependents with unnecessary dependencies.
+//!
+//! ## Dealing with multiple global executors
+//! Global executor cloud spawn task with no help from thread context. But this exposes us an
+//! dilemma to us, which one to use if there are multiple global executors present ? By default,
+//! `spawns` randomly chooses one and stick to it to spawn tasks in absent of thread context
+//! spawners. Generally, this should be safe as global executors should be designed to spawn
+//! everywhere. If this is not the case, one could use environment variable `SPAWNS_GLOBAL_SPAWNER`
+//! to specify one. As a safety net, feature `panic-multiple-global-spawners` is provided to panic
+//! if there are multiple global candidates.
 
 pub use spawns_core::*;
 

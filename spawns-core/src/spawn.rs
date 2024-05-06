@@ -195,11 +195,15 @@ mod tests {
 
         #[cfg(feature = "test-compat-global1")]
         #[distributed_slice(COMPATS)]
+        #[allow(deprecated)]
         pub static THREAD_GLOBAL: Compat = Compat::Global(thread_global);
 
         #[cfg(feature = "test-compat-global2")]
         #[distributed_slice(COMPATS)]
-        pub static DROP_GLOBAL: Compat = Compat::Global(drop_global);
+        pub static DROP_GLOBAL: Compat = Compat::NamedGlobal {
+            name: "drop",
+            spawn: drop_global,
+        };
 
         #[cfg(feature = "test-compat-global2")]
         fn drop_global(task: Task) {
@@ -255,6 +259,7 @@ mod tests {
         }
 
         #[cfg(feature = "test-compat-global2")]
+        #[cfg(not(feature = "test-named-global"))]
         #[cfg(feature = "panic-multiple-global-spawners")]
         #[test]
         #[should_panic(expected = "multiple global spawners")]
@@ -263,10 +268,25 @@ mod tests {
         }
 
         #[cfg(feature = "test-compat-global2")]
+        #[cfg(not(feature = "test-named-global"))]
         #[cfg(not(feature = "panic-multiple-global-spawners"))]
         #[test]
         fn multiple_globals() {
-            block_on(spawn(ready(()))).unwrap();
+            // The one chosen is indeterminate.
+            spawn(ready(()));
+        }
+
+        // Rust runs all tests in one process for given features, so it is crucial to keep features
+        // set unique for this test as it setup environment variable SPAWNS_GLOBAL_SPAWNER.
+        #[cfg(feature = "test-compat-global2")]
+        #[cfg(feature = "test-named-global")]
+        #[cfg(feature = "panic-multiple-global-spawners")]
+        #[test]
+        fn multiple_globals_choose_named() {
+            std::env::set_var("SPAWNS_GLOBAL_SPAWNER", "drop");
+            let handle = spawn(ready(()));
+            let err = block_on(handle).unwrap_err();
+            assert!(err.is_cancelled());
         }
     }
 }

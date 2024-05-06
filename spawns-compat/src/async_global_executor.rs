@@ -3,7 +3,10 @@ use spawns_core::{Compat, Task, COMPATS};
 use std::boxed::Box;
 
 #[distributed_slice(COMPATS)]
-pub static ASYNC_GLOBAL_EXECUTOR: Compat = Compat::Global(async_global);
+pub static ASYNC_GLOBAL_EXECUTOR: Compat = Compat::NamedGlobal {
+    name: "async-global-executor",
+    spawn: async_global,
+};
 
 fn async_global(task: Task) {
     let Task { future, .. } = task;
@@ -14,11 +17,12 @@ fn async_global(task: Task) {
 #[cfg(feature = "async-global-executor")]
 #[cfg(not(feature = "smol"))]
 mod tests {
+    use futures_lite::future;
     use spawns_core::*;
 
     #[test]
     fn spawn_one() {
-        async_std::task::block_on(async {
+        future::block_on(async {
             let handle = spawn(async { id() });
             let id = handle.id();
             assert_eq!(handle.await.unwrap(), id);
@@ -27,7 +31,7 @@ mod tests {
 
     #[test]
     fn spawn_cascading() {
-        async_std::task::block_on(async {
+        future::block_on(async {
             let handle = spawn(async { spawn(async { id() }) });
             let handle = handle.await.unwrap();
             let id = handle.id();
@@ -37,7 +41,7 @@ mod tests {
 
     #[test]
     fn spawn_interleaving() {
-        async_std::task::block_on(async move {
+        future::block_on(async move {
             let handle = spawn(async { async_std::task::spawn(async { spawn(async { id() }) }) });
             let handle = handle.await.unwrap().await;
             let id = handle.id();
@@ -47,7 +51,7 @@ mod tests {
 
     #[test]
     fn spawn_into_smol() {
-        async_std::task::block_on(async move {
+        future::block_on(async move {
             let handle = spawn(async { async_std::task::spawn(async { try_id() }) });
             let handle = handle.await.unwrap();
             assert_eq!(handle.await, None);

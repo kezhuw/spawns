@@ -15,6 +15,7 @@ compat = ["linkme"]
 panic-multiple-global-spawners = []
 test-compat-global1 = ["compat"]
 test-compat-global2 = ["compat", "test-compat-global1"]
+test-named-global = []
 
 [dependencies]
 linkme = { version = "0.3.25", optional = true }
