@@ -80,7 +80,8 @@ The API is capable to spawn, join and cancel tasks as what `tokio`, `smol` and `
 1. Boxing ? Yes, it needs `GlobalAlloc`.
 2. Boxing even the entry future ? No, but `try_id()` will return `None`. I guess we could provides function to wrap a bit.
 3. `no_std` ? No, it needs `thread_local!` currently. We can move this to [`#[thread_local]`](https://github.com/rust-lang/rust/issues/29594) once stabilized.
-4. `spawn_local` for `!Send` future ? No, at least for now. I saw only `async-global-executor` is capable to `spawn_local` freely. Personally, I think it is Rust's responsibility to not treat futures owning `!Send` as `!Send`. This way there are little chance for us to create `!Send` futures. For futures that capturing `!Send` in first place and storing thread local `!Send`, they need current thread executor.
+4. `spawn_local` for `!Send` future ? No, at least for now. I saw only `async-global-executor` is capable to `spawn_local` freely. I think it is Rust's responsibility to not treat futures owning `!Send` as `!Send`. This way there will be little chance for us to create `!Send` futures. See [Async Rust needs Await and 'thread for `Send` `Future`
+][async-rust-thoughts-kezhuw-blog] for my thoughts on this. For futures that capturing `!Send` in first place and storing thread local `!Send`, they need current thread executor.
 
 ## Packages
 1. [spawns-core][] provides `Spawn` and `enter()` for async runtimes to setup thread context task spawner.
@@ -127,3 +128,4 @@ All you have to do for it to be function is setting up thread context task spawn
 [spawns-core]: https://docs.rs/spawns-core
 [spawns-compat]: https://docs.rs/spawns-compat
 [spawns-executor]: https://docs.rs/spawns-executor
+[async-rust-thoughts-kezhuw-blog]: https://blog.kezhuw.name/2024/05/05/Async-Rust-needs-Await-and-'thread-for-Send-Future/
