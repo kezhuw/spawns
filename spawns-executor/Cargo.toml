@@ -16,6 +16,7 @@ futures = { version = "0.3.30" }
 spawns-core = { path = "../spawns-core", version = "1.0.2" }
 
 [dev-dependencies]
+async-io = "2.3.2"
 async-net = "2.0.0"
 futures-lite = "2.3.0"
 

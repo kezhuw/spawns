@@ -70,6 +70,8 @@ impl Blocking {
 
     /// Blocks current thread and runs given future until completion.
     ///
+    /// All task will be cancelled sooner or later after return.
+    ///
     /// Uses [spawn] to spawn assistant tasks.
     pub fn block_on<T: Send + 'static, F: Future<Output = T> + Send + 'static>(
         self,
@@ -99,6 +101,8 @@ impl Blocking {
 
 /// Blocks current thread and runs given future until completion.
 ///
+/// All task will be cancelled after return.
+///
 /// Uses [spawn] to spawn assistant tasks.
 pub fn block_on<T: Send + 'static, F: Future<Output = T> + Send + 'static>(future: F) -> F::Output {
     let mut pool = LocalPool::new();
@@ -111,7 +115,8 @@ pub fn block_on<T: Send + 'static, F: Future<Output = T> + Send + 'static>(futur
 
 #[cfg(test)]
 mod tests {
-    use super::{block_on, Blocking};
+    use super::{block_current_thread_on, block_on, Blocking};
+    use spawns_core as spawns;
 
     mod echo {
         // All this module are runtime agnostic.
@@ -165,5 +170,27 @@ mod tests {
         let msg = b"Hello! Multi-Thread Executor!";
         let result = Blocking::new(4).block_on(echo::echo_one(msg));
         assert_eq!(&result[..], msg);
+    }
+
+    #[test]
+    fn task_cancelled_after_main_return_current_thread() {
+        use async_io::Timer;
+        use std::time::Duration;
+        let handle = block_on(async {
+            spawns::spawn(async { Timer::after(Duration::from_secs(30)).await })
+        });
+        let err = block_current_thread_on(handle).unwrap_err();
+        assert!(err.is_cancelled());
+    }
+
+    #[test]
+    fn task_cancelled_after_main_return_multi_thread() {
+        use async_io::Timer;
+        use std::time::Duration;
+        let handle = Blocking::new(4).block_on(async {
+            spawns::spawn(async { Timer::after(Duration::from_secs(30)).await })
+        });
+        let err = block_current_thread_on(handle).unwrap_err();
+        assert!(err.is_cancelled());
     }
 }
