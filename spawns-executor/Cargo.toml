@@ -7,6 +7,7 @@ edition.workspace = true
 homepage.workspace = true
 license.workspace = true
 repository.workspace = true
+documentation.workspace = true
 description = "Async executors for thread context task spawner"
 
 [dependencies]
