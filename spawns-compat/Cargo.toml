@@ -19,7 +19,7 @@ async-global-executor = ["linkme", "spawns-core/compat", "dep:async-global-execu
 [dependencies]
 linkme = { version = "0.3.25", optional = true }
 smol = { version = "2.0.0", optional = true }
-spawns-core = { path = "../spawns-core", version = "1.1.0", optional = true }
+spawns-core = { path = "../spawns-core", version = "1.1.1", optional = true }
 tokio = { version = "1", features = ["rt"], optional = true }
 async-global-executor = { version =  "2", optional = true }
 

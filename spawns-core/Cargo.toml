@@ -1,6 +1,6 @@
 [package]
 name = "spawns-core"
-version = "1.1.0"
+version = "1.1.1"
 readme.workspace = true
 authors.workspace = true
 edition.workspace = true
