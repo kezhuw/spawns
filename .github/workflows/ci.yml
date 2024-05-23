@@ -68,6 +68,10 @@ jobs:
           toolchain: nightly
           override: true
           components: llvm-tools-preview
+    # dtolnay/linkme#88
+    # rust-lang/rust#124129
+    - name: Disable rust-lld
+      run: echo RUSTFLAGS=${RUSTFLAGS}\ -Zlinker-features=-lld >> $GITHUB_ENV
     - run: cargo install grcov
     - name: Install cargo-feature-combinations
       run: cargo install cargo-feature-combinations
