@@ -22,7 +22,10 @@ pub struct SpawnScope<'a> {
 
 fn exchange(spawner: Option<&dyn Spawn>) -> Option<&'static dyn Spawn> {
     SPAWNER.with_borrow_mut(|previous| unsafe {
-        std::mem::replace(previous, std::mem::transmute(spawner))
+        std::mem::replace(
+            previous,
+            std::mem::transmute::<Option<&dyn Spawn>, Option<&'static dyn Spawn>>(spawner),
+        )
     })
 }
 
@@ -148,6 +151,7 @@ mod tests {
     fn thread_spawner_cascading_ready() {
         let spawner = ThreadSpawner::default();
         let _scope = enter(&spawner);
+        #[allow(clippy::async_yields_async)]
         let handle = spawn(async move { spawn(async { id() }) });
         let handle = block_on(handle).unwrap();
         let id = handle.id();
@@ -158,6 +162,7 @@ mod tests {
     fn thread_spawner_cascading_cancel() {
         let spawner = ThreadSpawner::default();
         let _scope = enter(&spawner);
+        #[allow(clippy::async_yields_async)]
         let handle = spawn(async move { spawn(pending::<()>()) });
         let handle = block_on(handle).unwrap();
         handle.cancel();
@@ -172,7 +177,7 @@ mod tests {
         use linkme::distributed_slice;
         use std::cell::Cell;
         thread_local! {
-            static DROP_SPAWNER: Cell<Option<DropSpawner>> = Cell::new(None);
+            static DROP_SPAWNER: Cell<Option<DropSpawner>> = const {  Cell::new(None) };
         }
 
         #[distributed_slice(COMPATS)]
@@ -187,7 +192,7 @@ mod tests {
         }
 
         thread_local! {
-            static THREAD_SPAWNER: Cell<Option<ThreadSpawner>> = Cell::new(None);
+            static THREAD_SPAWNER: Cell<Option<ThreadSpawner>> = const { Cell::new(None) };
         }
 
         #[distributed_slice(COMPATS)]

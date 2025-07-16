@@ -17,11 +17,11 @@ mod echo {
             id_counter += 1;
             let id = id_counter;
             let handle = spawns::spawn(async move {
-                eprintln!("{:010}[{}]: serving", id, remote_addr);
+                eprintln!("{id:010}[{remote_addr}]: serving");
                 let (reader, writer) = io::split(stream);
                 match io::copy(reader, writer).await {
-                    Ok(_) => eprintln!("{:010}[{}]: closed", id, remote_addr),
-                    Err(err) => eprintln!("{:010}[{}]: {:?}", id, remote_addr, err),
+                    Ok(_) => eprintln!("{id:010}[{remote_addr}]: closed"),
+                    Err(err) => eprintln!("{id:010}[{remote_addr}]: {err:?}"),
                 }
             })
             .attach();

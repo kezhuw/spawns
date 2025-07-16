@@ -31,6 +31,7 @@ mod tests {
 
     #[tokio::test]
     async fn spawn_cascading() {
+        #[allow(clippy::async_yields_async)]
         let handle = spawn(async { spawn(async { id() }) });
         let handle = handle.await.unwrap();
         let id = handle.id();
@@ -39,6 +40,7 @@ mod tests {
 
     #[tokio::test]
     async fn spawn_interleaving() {
+        #[allow(clippy::async_yields_async)]
         let handle = spawn(async { tokio::spawn(async { spawn(async { id() }) }) });
         let handle = handle.await.unwrap().await.unwrap();
         let id = handle.id();
@@ -47,6 +49,7 @@ mod tests {
 
     #[tokio::test]
     async fn spawn_into_tokio() {
+        #[allow(clippy::async_yields_async)]
         let handle = spawn(async { tokio::spawn(async { try_id() }) });
         let handle = handle.await.unwrap();
         assert_eq!(handle.await.unwrap(), None);

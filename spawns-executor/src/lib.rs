@@ -86,7 +86,7 @@ impl Blocking {
         let shutdown_signal = shutdown.wait_shutdown_triggered();
         (2..=threads).for_each(|i| {
             thread::Builder::new()
-                .name(format!("spawns-executor-{}/{}", i, threads))
+                .name(format!("spawns-executor-{i}/{threads}"))
                 .spawn({
                     let executor = executor.clone();
                     let shutdown_signal = shutdown_signal.clone();
@@ -147,7 +147,7 @@ mod tests {
 
         pub async fn echo_one(data: &[u8]) -> Vec<u8> {
             let (port, _server_handle) = start_echo_server().await;
-            let mut stream = TcpStream::connect(format!("127.0.0.1:{}", port))
+            let mut stream = TcpStream::connect(format!("127.0.0.1:{port}"))
                 .await
                 .unwrap();
             stream.write_all(data).await.unwrap();
@@ -176,6 +176,7 @@ mod tests {
     fn task_cancelled_after_main_return_current_thread() {
         use async_io::Timer;
         use std::time::Duration;
+        #[allow(clippy::async_yields_async)]
         let handle = block_on(async {
             spawns::spawn(async { Timer::after(Duration::from_secs(30)).await })
         });
@@ -187,6 +188,7 @@ mod tests {
     fn task_cancelled_after_main_return_multi_thread() {
         use async_io::Timer;
         use std::time::Duration;
+        #[allow(clippy::async_yields_async)]
         let handle = Blocking::new(4).block_on(async {
             spawns::spawn(async { Timer::after(Duration::from_secs(30)).await })
         });

@@ -117,7 +117,7 @@ impl Display for Id {
 
 impl Debug for Id {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "TaskId({})", self)
+        write!(f, "TaskId({self})")
     }
 }
 
@@ -798,7 +798,7 @@ mod tests {
         handle.cancel();
         block_on(Box::into_pin(task.future));
         let err = block_on(handle).unwrap_err();
-        assert_eq!(err.is_cancelled(), true);
+        assert!(err.is_cancelled());
     }
 
     #[test]
@@ -807,7 +807,7 @@ mod tests {
         handle.cancel_handle().cancel();
         block_on(Box::into_pin(task.future));
         let err = block_on(handle).unwrap_err();
-        assert_eq!(err.is_cancelled(), true);
+        assert!(err.is_cancelled());
     }
 
     #[test]
@@ -815,7 +815,7 @@ mod tests {
         let (task, handle) = Task::new(Name::default(), ready(()));
         drop(task);
         let err = block_on(handle).unwrap_err();
-        assert_eq!(err.is_cancelled(), true);
+        assert!(err.is_cancelled());
     }
 
     #[test]
@@ -828,7 +828,7 @@ mod tests {
         handle.cancel();
         assert_eq!(task.as_mut().poll(&mut cx), Poll::Ready(()));
         let err = block_on(handle).unwrap_err();
-        assert_eq!(err.is_cancelled(), true);
+        assert!(err.is_cancelled());
     }
 
     #[test]
@@ -937,7 +937,7 @@ mod tests {
         });
         let handle = handle.attach();
         let err = block_on(async move { handle.cancel().await.unwrap_err() });
-        assert_eq!(err.is_cancelled(), true);
+        assert!(err.is_cancelled());
     }
 
     struct Sleep {
@@ -990,7 +990,7 @@ mod tests {
         let handle = handle.attach().detach();
         drop(handle);
         block_on(Box::into_pin(task.future));
-        assert_eq!(cancelled.load(Ordering::Relaxed), false);
+        assert!(!cancelled.load(Ordering::Relaxed));
     }
 
     struct CustomFuture {
