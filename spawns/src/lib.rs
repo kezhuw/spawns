@@ -72,6 +72,3 @@ pub use spawns_core::*;
 
 #[cfg(feature = "executor")]
 pub use spawns_executor::*;
-
-#[cfg(feature = "spawns-compat")]
-extern crate spawns_compat;

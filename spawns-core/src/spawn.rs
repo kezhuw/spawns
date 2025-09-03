@@ -1,5 +1,5 @@
 #[cfg(feature = "compat")]
-use crate::find_spawn;
+use crate::compat::find_spawn;
 use crate::{JoinHandle, Name, Task};
 use std::cell::RefCell;
 use std::future::Future;

@@ -4,7 +4,6 @@ members = [
   "examples",
   "spawns",
   "spawns-core",
-  "spawns-compat",
   "spawns-executor",
 ]
 

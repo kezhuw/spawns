@@ -1,9 +1,5 @@
-use linkme::distributed_slice;
-use spawns_core::{Compat, Task, COMPATS};
+use crate::Task;
 use std::boxed::Box;
-
-#[distributed_slice(COMPATS)]
-pub static TOKIO: Compat = Compat::Local(tokio_local);
 
 fn tokio_spawn(task: Task) {
     let Task { future, .. } = task;
@@ -11,7 +7,7 @@ fn tokio_spawn(task: Task) {
     handle.spawn(Box::into_pin(future));
 }
 
-fn tokio_local() -> Option<fn(Task)> {
+pub(crate) fn tokio_local() -> Option<fn(Task)> {
     tokio::runtime::Handle::try_current()
         .ok()
         .map(|_| tokio_spawn as fn(Task))

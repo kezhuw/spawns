@@ -1,21 +1,14 @@
-use linkme::distributed_slice;
-use spawns_core::{Compat, Task, COMPATS};
+use crate::Task;
 use std::boxed::Box;
 
-#[distributed_slice(COMPATS)]
-pub static SMOL: Compat = Compat::NamedGlobal {
-    name: "smol",
-    spawn: smol_global,
-};
-
-fn smol_global(task: Task) {
+pub(crate) fn async_global(task: Task) {
     let Task { future, .. } = task;
-    smol::spawn(Box::into_pin(future)).detach()
+    async_global_executor::spawn(Box::into_pin(future)).detach()
 }
 
 #[cfg(test)]
-#[cfg(feature = "smol")]
-#[cfg(not(feature = "async-global-executor"))]
+#[cfg(feature = "async-global-executor")]
+#[cfg(not(feature = "smol"))]
 mod tests {
     use futures_lite::future;
     use spawns_core::*;
@@ -42,7 +35,7 @@ mod tests {
     #[test]
     fn spawn_interleaving() {
         future::block_on(async move {
-            let handle = spawn(async { smol::spawn(async { spawn(async { id() }) }) });
+            let handle = spawn(async { async_std::task::spawn(async { spawn(async { id() }) }) });
             let handle = handle.await.unwrap().await;
             let id = handle.id();
             assert_eq!(handle.await.unwrap(), id);
@@ -52,7 +45,7 @@ mod tests {
     #[test]
     fn spawn_into_smol() {
         future::block_on(async move {
-            let handle = spawn(async { smol::spawn(async { try_id() }) });
+            let handle = spawn(async { async_std::task::spawn(async { try_id() }) });
             let handle = handle.await.unwrap();
             assert_eq!(handle.await, None);
         });

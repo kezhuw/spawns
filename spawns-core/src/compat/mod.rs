@@ -1,5 +1,11 @@
+#[cfg(feature = "smol")]
+mod smol;
+#[cfg(feature = "tokio")]
+pub mod tokio;
+#[cfg(feature = "async-global-executor")]
+mod async_global_executor;
+
 use crate::Task;
-use linkme::distributed_slice;
 use std::sync::OnceLock;
 
 /// Compat encapsulate functions to find async runtimes to spawn task.
@@ -15,9 +21,20 @@ pub enum Compat {
     Local(fn() -> Option<fn(Task)>),
 }
 
-/// [DistributedSlice][linkme::DistributedSlice] to collect [Compat]s.
-#[distributed_slice]
-pub static COMPATS: [Compat] = [..];
+pub static COMPATS: &[Compat] = &[
+    #[cfg(feature = "tokio")]
+    Compat::Local(tokio::tokio_local),
+    #[cfg(feature = "smol")]
+    Compat::NamedGlobal {
+        name: "smol",
+        spawn: smol::smol_global,
+    },
+    #[cfg(feature = "async-global-executor")]
+    Compat::NamedGlobal {
+        name: "async-global-executor",
+        spawn: async_global_executor::async_global,
+    }
+];
 
 #[derive(Clone, Copy)]
 pub(crate) enum Failure {
