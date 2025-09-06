@@ -3,6 +3,7 @@ use linkme::distributed_slice;
 use std::sync::OnceLock;
 
 /// Compat encapsulate functions to find async runtimes to spawn task.
+#[non_exhaustive]
 pub enum Compat {
     /// Named global function to spawn task.
     NamedGlobal { name: &'static str, spawn: fn(Task) },
