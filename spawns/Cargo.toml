@@ -13,6 +13,7 @@ description = "Async runtime agnostic thread context task spawner for Rust"
 [features]
 default = []
 executor = ["spawns-executor"]
+compat = ["spawns-core/compat"]
 tokio = ["spawns-compat/tokio"]
 smol = ["spawns-compat/smol"]
 async-global-executor = ["spawns-compat/async-global-executor"]

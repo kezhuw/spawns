@@ -68,9 +68,17 @@
 //! to specify one. As a safety net, feature `panic-multiple-global-spawners` is provided to panic
 //! if there are multiple global candidates.
 
-pub use spawns_core::*;
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
+#[cfg(feature = "compat")]
+#[cfg_attr(docsrs, doc(cfg(feature = "compat")))]
+pub use spawns_core::__compat::{Compat, COMPATS};
+
+pub use spawns_core::__spawn::*;
+pub use spawns_core::__task::*;
 
 #[cfg(feature = "executor")]
+#[cfg_attr(docsrs, doc(cfg(feature = "executor")))]
 pub use spawns_executor::*;
 
 #[cfg(feature = "spawns-compat")]
