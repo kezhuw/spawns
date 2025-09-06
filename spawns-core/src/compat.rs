@@ -2,7 +2,7 @@ use crate::Task;
 use linkme::distributed_slice;
 use std::sync::OnceLock;
 
-/// Compat encapsulate functions to find async runtimes to spawn task.
+/// Item of [COMPATS] to encapsulate functions to spawn task for async runtime.
 #[non_exhaustive]
 pub enum Compat {
     /// Named global function to spawn task.
@@ -16,7 +16,43 @@ pub enum Compat {
     Local(fn() -> Option<fn(Task)>),
 }
 
-/// [DistributedSlice][linkme::DistributedSlice] to collect [Compat]s.
+/// [DistributedSlice][linkme::DistributedSlice] to collect [Compat]s from
+/// [distributed_slice][linkme::distributed_slice].
+///
+/// Here are examples for `tokio` and `smol`, see [linkme] for details.
+///
+/// ```rust,no_run
+/// use spawns_core as spawns;
+///
+/// use linkme::distributed_slice;
+/// use spawns::{Compat, Task, COMPATS};
+///
+/// #[distributed_slice(COMPATS)]
+/// static TOKIO: Compat = Compat::Local(tokio_local);
+///
+/// fn tokio_spawn(task: Task) {
+///     let Task { future, .. } = task;
+///     let handle = tokio::runtime::Handle::current();
+///     handle.spawn(Box::into_pin(future));
+/// }
+///
+/// fn tokio_local() -> Option<fn(Task)> {
+///     tokio::runtime::Handle::try_current()
+///         .ok()
+///         .map(|_| tokio_spawn as fn(Task))
+/// }
+///
+/// #[distributed_slice(COMPATS)]
+/// static SMOL: Compat = Compat::NamedGlobal {
+///     name: "smol",
+///     spawn: smol_global,
+/// };
+///
+/// fn smol_global(task: Task) {
+///     let Task { future, .. } = task;
+///     smol::spawn(Box::into_pin(future)).detach()
+/// }
+/// ```
 #[distributed_slice]
 pub static COMPATS: [Compat] = [..];
 
