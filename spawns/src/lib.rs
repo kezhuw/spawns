@@ -50,15 +50,6 @@
 //! Noted that, all those compatibility features, injections should only active on tests and
 //! binaries. Otherwise, they will be propagated to dependents with unnecessary dependencies.
 //!
-//! For macOS users, you may have to put below to your `Cargo.toml` for above to function.
-//!
-//! ```toml
-//! [profile.dev]
-//! lto = "thin"
-//! ```
-//!
-//! See <https://github.com/dtolnay/linkme/issues/61> for sure.
-//!
 //! ## Dealing with multiple global executors
 //! Global executor cloud spawn task with no help from thread context. But this exposes us an
 //! dilemma to us, which one to use if there are multiple global executors present ? By default,
@@ -67,6 +58,31 @@
 //! everywhere. If this is not the case, one could use environment variable `SPAWNS_GLOBAL_SPAWNER`
 //! to specify one. As a safety net, feature `panic-multiple-global-spawners` is provided to panic
 //! if there are multiple global candidates.
+//!
+//! ## Panic: "no spawner"
+//!
+//! `spawns` will panic "no spawner" in case that it can't find a suitable way to spawn task. This
+//! could happen if neither [Spawn] nor suitable [Compat]s found. But it could also happen in cases
+//! that [Compat] symbols get discarded by linker. You may have to tweak compiler flags or profile
+//! settings to overcome this, say, you probably will need `lto = "fat"` in `[profile.release]` to
+//! ship crates as `staticlib`.
+//!
+//! ```toml
+//! [lib]
+//! crate-type = ["staticlib"]
+//!
+//! [profile.release]
+//! lto = "fat"
+//! ```
+//!
+//! See also:
+//! * [Doesn't add elements to distributed slice from external crate on macOS](https://github.com/dtolnay/linkme/issues/61)
+//! * [Use lto = "fat" to enable lto across all crates](https://github.com/redarkyan/spawns-panic-repro/pull/1)
+//! * [Linker-plugin-based LTO](https://doc.rust-lang.org/rustc/linker-plugin-lto.html)
+//! * [Profile setting lto](https://doc.rust-lang.org/cargo/reference/profiles.html#lto)
+//! * [Global Registration (a kind of pre-rfc)](https://internals.rust-lang.org/t/global-registration-a-kind-of-pre-rfc/20813)
+//! * [From “life before main” to “common life in main”](https://internals.rust-lang.org/t/from-life-before-main-to-common-life-in-main/16006)
+//! * [Rust Linkage](https://doc.rust-lang.org/reference/linkage.html)
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
