@@ -10,7 +10,7 @@ thread_local! {
 }
 
 /// Trait to spawn task.
-pub trait Spawn {
+pub trait Spawn: Sync + Send {
     fn spawn(&self, task: Task);
 }
 
