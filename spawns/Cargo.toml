@@ -1,6 +1,6 @@
 [package]
 name = "spawns"
-version = "0.2.5"
+version = "0.2.6"
 readme.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -20,9 +20,9 @@ async-global-executor = ["spawns-compat/async-global-executor"]
 panic-multiple-global-spawners = ["spawns-core/panic-multiple-global-spawners"]
 
 [dependencies]
-spawns-core = { path = "../spawns-core", version = "1.1.1" }
-spawns-compat = { path = "../spawns-compat", version = "0.2.1", optional = true }
-spawns-executor = { path = "../spawns-executor", version = "0.1.1", optional = true }
+spawns-core = { path = "../spawns-core", version = "1.1.2" }
+spawns-compat = { path = "../spawns-compat", version = "0.2.2", optional = true }
+spawns-executor = { path = "../spawns-executor", version = "0.1.2", optional = true }
 
 [dev-dependencies]
 async-net = "2.0.0"
